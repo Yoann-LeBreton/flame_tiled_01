@@ -4,8 +4,11 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flame_tiled_01/components/base_component.dart';
 import 'package:flame_tiled_01/components/decoration_component.dart';
+import 'package:flame_tiled_01/components/door_component.dart';
 import 'package:flame_tiled_01/components/friend_component.dart';
+import 'package:flame_tiled_01/components/house_component.dart';
 import 'package:flame_tiled_01/enums/enum_collision_type.dart';
 import 'package:flame_tiled_01/enums/enum_moving_input.dart';
 import 'package:flame_tiled_01/enums/enum_player_state.dart';
@@ -74,9 +77,7 @@ class PlayerComponent extends SpriteAnimationGroupComponent<PlayerState>
       Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
 
-    if (other is FriendComponent ||
-        other is TiledComponent ||
-        other is DecorationComponent) {
+    if (other is BaseComponent) {
       final collision = playerCollisionSide(intersectionPoints, position, size);
       current = PlayerState.idle;
       if (collision.contains(PlayerCollisionType.top)) {
@@ -85,6 +86,9 @@ class PlayerComponent extends SpriteAnimationGroupComponent<PlayerState>
           final pos = Vector2(
               other.topLeftPosition.x - 50, other.topLeftPosition.y - 50);
           gameRef.onFriendSpeak(other.dialog, pos);
+        } else if (other is HouseComponent) {
+          removeFromParent();
+          gameRef.setHouseMap();
         }
       }
       if (collision.contains(PlayerCollisionType.bottom)) {
@@ -94,6 +98,10 @@ class PlayerComponent extends SpriteAnimationGroupComponent<PlayerState>
         _directionsAllow[MovingInput.left] = false;
       }
       if (collision.contains(PlayerCollisionType.right)) {
+        if (other is DoorComponent) {
+          removeFromParent();
+          gameRef.setLandMap();
+        } else {}
         _directionsAllow[MovingInput.right] = false;
       }
     }
