@@ -33,7 +33,9 @@ class MyGame extends FlameGame
   }
 
   Future setLandMap() async {
-    _world.children.clear();
+    for (var element in _world.children) {
+      element.removeFromParent();
+    }
     TiledComponent homeMap =
         await TiledComponent.load('map_01.tmx', Vector2.all(16));
     await homeMap.add(RectangleHitbox());
@@ -66,7 +68,9 @@ class MyGame extends FlameGame
   }
 
   Future setHouseMap() async {
-    _world.children.clear();
+    for (var element in _world.children) {
+      element.removeFromParent();
+    }
     TiledComponent homeMap =
         await TiledComponent.load('map_02.tmx', Vector2.all(16));
     await homeMap.add(RectangleHitbox());
